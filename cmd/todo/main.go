@@ -4,9 +4,9 @@ CLI tool для работы со списком задач. Сохраняет 
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
-	"strings"
 
 	todo "github.com/hazadus/go-todo"
 )
@@ -14,9 +14,16 @@ import (
 const todoFileName = ".todo.json"
 
 func main() {
-	list := &todo.List{}
+	// Parse command line flags
+	taskFlag := flag.String("task", "", "Задача для добавления в список")
+	listFlag := flag.Bool("list", false, "Вывести список задач")
+	completeFlag := flag.Int("complete", 0, "Завершить задачу с указанным номером")
+	flag.Parse()
 
-	if err := list.Load(todoFileName); err != nil {
+	// Define and load task taskList
+	taskList := &todo.List{}
+
+	if err := taskList.Load(todoFileName); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
@@ -24,20 +31,30 @@ func main() {
 	// Decided what to do depending on the number of
 	// arguments provided
 	switch {
-	// For no extra arguments, print the list
-	case len(os.Args) == 1:
-		for _, item := range *list {
-			fmt.Println(item.Task)
+	case *listFlag:
+		for _, item := range *taskList {
+			if !item.IsDone {
+				fmt.Println(item.Task)
+			}
 		}
-	// Concatenate all provided arguments with a space
-	// and add to the list as an item
-	default:
-		item := strings.Join(os.Args[1:], " ")
-		list.Add(item)
-
-		if err := list.Save(todoFileName); err != nil {
+	case *completeFlag > 0:
+		if err := taskList.Complete(*completeFlag); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-	}
+		if err := taskList.Save(todoFileName); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+	case *taskFlag != "":
+		taskList.Add(*taskFlag)
+		if err := taskList.Save(todoFileName); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+	default:
+		// Invalid flags, or none at all
+		fmt.Fprintln(os.Stderr, "Неверные параметры")
+		os.Exit(1)
+}
 }
