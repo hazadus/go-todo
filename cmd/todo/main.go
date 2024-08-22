@@ -11,9 +11,15 @@ import (
 	todo "github.com/hazadus/go-todo"
 )
 
-const todoFileName = ".todo.json"
+// Default file name
+// Override via GO_TODO_FILENAME env variable
+var todoFileName = ".todo.json"
 
 func main() {
+	if envTodoFileName := os.Getenv("GO_TODO_FILENAME"); envTodoFileName != "" {
+		todoFileName = envTodoFileName
+	}
+	
 	// Define custom output for "-h" flag
 	flag.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), "%s CLI tool. Разработано для изучения языка Go.\n", os.Args[0])
@@ -60,5 +66,5 @@ func main() {
 		// Invalid flags, or none at all
 		fmt.Fprintln(os.Stderr, "Неверные параметры")
 		os.Exit(1)
-}
+	}
 }
