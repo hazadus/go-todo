@@ -40,11 +40,7 @@ func main() {
 	// arguments provided
 	switch {
 	case *listFlag:
-		for _, item := range *taskList {
-			if !item.IsDone {
-				fmt.Println(item.Task)
-			}
-		}
+		fmt.Print(taskList)
 	case *completeFlag > 0:
 		if err := taskList.Complete(*completeFlag); err != nil {
 			fmt.Fprintln(os.Stderr, err)

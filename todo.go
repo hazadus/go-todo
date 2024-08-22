@@ -91,3 +91,19 @@ func (l *List) Load(filename string) error {
 
 	return json.Unmarshal(fileContent, l)
 }
+
+// String returns a formatted list
+// Implements the fmt.Stringer interface
+func (l *List) String() string {
+	output := ""
+
+	for index, item := range *l {
+		prefix := "[ ] "
+		if item.IsDone {
+			prefix = "[X] "
+		}
+		output += fmt.Sprintf("%s%d: %s\n", prefix, index+1, item.Task)
+	}
+
+	return output
+}
