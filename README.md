@@ -21,4 +21,11 @@ go run cmd/todo/main.go -complete 1
 
 ```bash
 go test -v
+go test -v ./cmd/todo
 ```
+
+----
+
+## Документация к пакетам
+
+- [flag](https://pkg.go.dev/flag)
