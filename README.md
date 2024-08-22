@@ -15,6 +15,9 @@ go run cmd/todo/main.go -list
 
 # Завершить задачу
 go run cmd/todo/main.go -complete 1
+
+# Получить справку
+go run cmd/todo/main.go -h
 ```
 
 ## Запуск тестов

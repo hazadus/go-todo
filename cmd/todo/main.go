@@ -14,12 +14,20 @@ import (
 const todoFileName = ".todo.json"
 
 func main() {
+	// Define custom output for "-h" flag
+	flag.Usage = func() {
+		fmt.Fprintf(flag.CommandLine.Output(), "%s CLI tool. Разработано для изучения языка Go.\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "(c) amgold.ru 2024\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "Поддерживаемые параметры:")
+		flag.PrintDefaults()
+	}
+
 	// Parse command line flags
 	taskFlag := flag.String("task", "", "Задача для добавления в список")
 	listFlag := flag.Bool("list", false, "Вывести список задач")
 	completeFlag := flag.Int("complete", 0, "Завершить задачу с указанным номером")
 	flag.Parse()
-
+	
 	// Define and load task taskList
 	taskList := &todo.List{}
 
