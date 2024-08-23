@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	binName = "todo_test"
+	binName      = "todo_test"
 	todoFileName = ".todo.json"
 )
 
@@ -47,7 +47,7 @@ func TestTodoCLI(t *testing.T) {
 
 	cmdPath := filepath.Join(dir, binName)
 
-	t.Run("AddNewTask", func (t *testing.T)  {
+	t.Run("AddNewTask", func(t *testing.T) {
 		cmd := exec.Command(cmdPath, "-task", task)
 
 		if err := cmd.Run(); err != nil {

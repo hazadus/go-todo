@@ -19,7 +19,7 @@ func main() {
 	if envTodoFileName := os.Getenv("GO_TODO_FILENAME"); envTodoFileName != "" {
 		todoFileName = envTodoFileName
 	}
-	
+
 	// Define custom output for "-h" flag
 	flag.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), "%s CLI tool. Разработано для изучения языка Go.\n", os.Args[0])
@@ -33,7 +33,7 @@ func main() {
 	listFlag := flag.Bool("list", false, "Вывести список задач")
 	completeFlag := flag.Int("complete", 0, "Завершить задачу с указанным номером")
 	flag.Parse()
-	
+
 	// Define and load task taskList
 	taskList := &todo.List{}
 

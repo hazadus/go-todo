@@ -25,9 +25,9 @@ type List []item
 // Add creates a new to-do item and appends it to the list
 func (l *List) Add(task string) {
 	t := item{
-		Task: task,
-		IsDone: false,
-		CreatedAt: time.Now(),
+		Task:        task,
+		IsDone:      false,
+		CreatedAt:   time.Now(),
 		CompletedAt: time.Time{},
 	}
 	*l = append(*l, t)
@@ -57,7 +57,7 @@ func (l *List) Delete(i int) error {
 		return fmt.Errorf("item %d does not exist", i)
 	}
 
-	*l = append(list[:i-1], list[i:]... )
+	*l = append(list[:i-1], list[i:]...)
 
 	return nil
 }
@@ -74,7 +74,7 @@ func (l *List) Save(filename string) error {
 }
 
 // Load method opens the provided file name, decodes
-// the JSON data and parses it into a List. Returns 
+// the JSON data and parses it into a List. Returns
 // nil if file does not exist or is empty.
 func (l *List) Load(filename string) error {
 	fileContent, err := os.ReadFile(filename)
