@@ -20,6 +20,9 @@ export GO_TODO_FILENAME=~/.go_todo.json
 # Добавить задачу
 go run cmd/todo/main.go -task "Погладить кота"
 
+# Добавить задачу из stdin
+echo "Задача из stdin" | go run cmd/todo/main.go -add
+
 # Посмотреть список задач
 go run cmd/todo/main.go -list
 

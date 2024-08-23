@@ -4,9 +4,12 @@ CLI tool для работы со списком задач. Сохраняет 
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
+	"io"
 	"os"
+	"strings"
 
 	todo "github.com/hazadus/go-todo"
 )
@@ -14,6 +17,24 @@ import (
 // Default file name
 // Override via GO_TODO_FILENAME env variable
 var todoFileName = ".todo.json"
+
+// getTask decides where to get the description for
+// a new task from: arguments or stdin.
+func getTask(r io.Reader, args ...string) (string, error) {
+	if len(args) > 0 {
+		return strings.Join(args, " "), nil
+	}
+
+	s := bufio.NewScanner(r)
+	s.Scan()
+	if err := s.Err(); err != nil {
+		return "", nil
+	}
+	if len(s.Text()) == 0 {
+		return "", fmt.Errorf("Task description can't be empty")
+	}
+	return s.Text(), nil
+}
 
 func main() {
 	if envTodoFileName := os.Getenv("GO_TODO_FILENAME"); envTodoFileName != "" {
@@ -29,7 +50,7 @@ func main() {
 	}
 
 	// Parse command line flags
-	taskFlag := flag.String("task", "", "Задача для добавления в список")
+	addFlag := flag.Bool("add", false, "Добавить задачу в список")
 	listFlag := flag.Bool("list", false, "Вывести список задач")
 	completeFlag := flag.Int("complete", 0, "Завершить задачу с указанным номером")
 	flag.Parse()
@@ -56,8 +77,17 @@ func main() {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-	case *taskFlag != "":
-		taskList.Add(*taskFlag)
+	case *addFlag:
+		// flag.Args() returns all the remaining non-flag
+		// arguments provided by the user:
+		task, err := getTask(os.Stdin, flag.Args()...)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		taskList.Add(task)
+
+		// Save updated task list
 		if err := taskList.Save(todoFileName); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
