@@ -11,7 +11,7 @@ import (
 
 var (
 	binName      = "todo_test"
-	todoFileName = ".todo.json"
+	todoFileName = ".todo_test.json"
 )
 
 func TestMain(m *testing.M) {
@@ -20,6 +20,9 @@ func TestMain(m *testing.M) {
 	if runtime.GOOS == "windows" {
 		binName += ".exe"
 	}
+
+	envTodoFileName := os.Getenv("GO_TODO_FILENAME")
+	os.Setenv("GO_TODO_FILENAME", todoFileName)
 
 	buildCmd := exec.Command("go", "build", "-o", binName)
 	if err := buildCmd.Run(); err != nil {
@@ -34,6 +37,7 @@ func TestMain(m *testing.M) {
 	os.Remove(binName)
 	os.Remove(todoFileName)
 
+	os.Setenv("GO_TODO_FILENAME", envTodoFileName)
 	os.Exit(result)
 }
 
@@ -47,8 +51,8 @@ func TestTodoCLI(t *testing.T) {
 
 	cmdPath := filepath.Join(dir, binName)
 
-	t.Run("AddNewTask", func(t *testing.T) {
-		cmd := exec.Command(cmdPath, "-task", task)
+	t.Run("AddNewTaskFromArguments", func(t *testing.T) {
+		cmd := exec.Command(cmdPath, "-add", task)
 
 		if err := cmd.Run(); err != nil {
 			t.Fatal(err)
